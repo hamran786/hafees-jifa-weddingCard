@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion'
 import './App.css'
 
 const WEDDING_DATE = new Date('2026-07-27T16:30:00')
@@ -54,9 +54,9 @@ function downloadICS() {
 
 const PETALS = Array.from({ length: 14 }, (_, i) => i)
 
-function FloatingPetals() {
+function FloatingPetals({ parallaxY }) {
   return (
-    <div className="petals" aria-hidden="true">
+    <motion.div className="petals" style={{ y: parallaxY }} aria-hidden="true">
       {PETALS.map((i) => (
         <motion.span
           key={i}
@@ -74,7 +74,7 @@ function FloatingPetals() {
           {i % 3 === 0 ? '✦' : i % 3 === 1 ? '❀' : '♥'}
         </motion.span>
       ))}
-    </div>
+    </motion.div>
   )
 }
 
@@ -314,6 +314,10 @@ export default function App() {
     setBtnBurstId((id) => id + 1)
   }
 
+  const { scrollYProgress } = useScroll()
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 })
+  const petalsY = useTransform(smoothProgress, [0, 1], [0, 60])
+
   return (
     <>
       <AnimatePresence>
@@ -324,7 +328,7 @@ export default function App() {
 
       {opened && (
     <motion.div className="invitation" variants={container} initial="hidden" animate="visible">
-      <FloatingPetals />
+      <FloatingPetals parallaxY={petalsY} />
       <CoupleIllustration />
 
       {/* Top ornament */}
@@ -381,6 +385,9 @@ export default function App() {
       <motion.div
         className="event-card"
         variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
         whileHover={{ y: -4, boxShadow: '0 16px 32px -16px rgba(122,31,43,0.45)' }}
       >
         <div className="event-col">
@@ -400,8 +407,22 @@ export default function App() {
       </motion.div>
 
       {/* Venue */}
-      <motion.p className="venue-name" variants={item}>{VENUE_NAME}</motion.p>
-      <motion.p className="venue-address" variants={item}>
+      <motion.p
+        className="venue-name"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
+        {VENUE_NAME}
+      </motion.p>
+      <motion.p
+        className="venue-address"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
         <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
           <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 6 3.5a1.5 1.5 0 0 1 0 3z" fill="#c9a15a"/>
         </svg>
@@ -409,8 +430,22 @@ export default function App() {
       </motion.p>
 
       {/* Countdown */}
-      <motion.p className="countdown-label" variants={item}>✦ Wedding Countdown ✦</motion.p>
-      <motion.div className="countdown-grid" variants={item}>
+      <motion.p
+        className="countdown-label"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.6 }}
+      >
+        ✦ Wedding Countdown ✦
+      </motion.p>
+      <motion.div
+        className="countdown-grid"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
         {[
           { num: pad(timeLeft.days), unit: 'Days' },
           { num: pad(timeLeft.hours), unit: 'Hours' },
@@ -442,7 +477,13 @@ export default function App() {
       </motion.div>
 
       {/* Action buttons */}
-      <motion.div className="btn-row-wrap" variants={item}>
+      <motion.div
+        className="btn-row-wrap"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
         {btnBurstId > 0 && <ConfettiBurst key={btnBurstId} className="confetti-btn" />}
         <div className="btn-row">
           <motion.button
@@ -475,7 +516,15 @@ export default function App() {
         </div>
       </motion.div>
 
-      <motion.p className="footer-note" variants={item}>With love, Hafees & Jifa ♥</motion.p>
+      <motion.p
+        className="footer-note"
+        variants={item}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.8 }}
+      >
+        With love, Hafees & Jifa ♥
+      </motion.p>
     </motion.div>
       )}
     </>
