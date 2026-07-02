@@ -136,6 +136,147 @@ function CoupleIllustration() {
   )
 }
 
+function EnvelopeIcon() {
+  return (
+    <svg viewBox="0 0 120 90" className="envelope-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="envelopeBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFFDF9" />
+          <stop offset="100%" stopColor="#F1E5CE" />
+        </linearGradient>
+        <linearGradient id="envelopeFlap" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFFDF9" />
+          <stop offset="100%" stopColor="#F8EFDE" />
+        </linearGradient>
+        <linearGradient id="sealGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8A2432" />
+          <stop offset="100%" stopColor="#5A1620" />
+        </linearGradient>
+      </defs>
+      <rect x="4" y="16" width="112" height="66" rx="10" fill="url(#envelopeBody)" stroke="#C9A15A" strokeWidth="2" />
+      <path
+        d="M4 22 C4 18 6.5 16 9 16 L111 16 C113.5 16 116 18 116 22 L62 59 C61 60 59 60 58 59 Z"
+        fill="url(#envelopeFlap)"
+        stroke="#C9A15A"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="60" cy="50" r="15" fill="url(#sealGradient)" stroke="#E8D5A8" strokeWidth="1.5" />
+      <text x="60" y="56" textAnchor="middle" fontSize="15" fill="#E8D5A8">♥</text>
+    </svg>
+  )
+}
+
+const SPARKLES = Array.from({ length: 12 }, (_, i) => i)
+
+const cardContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.3 } },
+}
+
+const cardItem = {
+  hidden: { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+}
+
+function EnvelopeIntro({ onOpen }) {
+  return (
+    <motion.div
+      className="envelope-intro"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 1.08 }}
+      transition={{ duration: 0.7, ease: 'easeInOut' }}
+    >
+      <motion.div
+        className="envelope-bg"
+        animate={{ scale: [1.08, 1, 1.08] }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <div className="envelope-vignette" />
+
+      <div className="envelope-sparkles" aria-hidden="true">
+        {SPARKLES.map((i) => (
+          <motion.span
+            key={i}
+            className="envelope-sparkle"
+            style={{ left: `${10 + (i * 8) % 82}%`, top: `${12 + (i * 17) % 76}%` }}
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{ opacity: [0, 1, 0], scale: [0.4, 1, 0.4] }}
+            transition={{ duration: 2.4 + (i % 3), repeat: Infinity, delay: i * 0.35, ease: 'easeInOut' }}
+          >
+            {i % 2 === 0 ? '✦' : '✨'}
+          </motion.span>
+        ))}
+      </div>
+
+      <motion.div className="envelope-card" variants={cardContainer} initial="hidden" animate="visible">
+        <motion.div className="envelope-emoji-wrap" variants={cardItem}>
+          <motion.div
+            className="envelope-glow-ring"
+            animate={{ scale: [1, 1.5, 1], opacity: [0.55, 0.1, 0.55] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="envelope-emoji"
+            animate={{ y: [0, -10, 0], rotate: [0, -3, 3, 0] }}
+            transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <EnvelopeIcon />
+          </motion.div>
+        </motion.div>
+
+        <motion.p className="envelope-title" variants={cardItem}>Hafees &amp; Jifa</motion.p>
+        <motion.p className="envelope-subtitle" variants={cardItem}>request the pleasure of your company</motion.p>
+
+        <motion.button
+          className="envelope-btn"
+          variants={cardItem}
+          onClick={onOpen}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.92 }}
+        >
+          ✦ Open Invitation ✦
+        </motion.button>
+
+        <motion.p
+          className="envelope-hint"
+          variants={cardItem}
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          Tap to unveil our story ↓
+        </motion.p>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+const CONFETTI_COLORS = ['#C9A15A', '#7A1F2B', '#E8D5A8', '#ffffff']
+
+function ConfettiBurst({ className }) {
+  const pieces = Array.from({ length: 22 }, (_, i) => i)
+  return (
+    <div className={`confetti-layer ${className}`} aria-hidden="true">
+      {pieces.map((i) => {
+        const angle = (i / pieces.length) * Math.PI * 2 + (i % 2 ? 0.2 : -0.2)
+        const distance = 70 + ((i * 37) % 130)
+        const x = Math.cos(angle) * distance
+        const y = Math.sin(angle) * distance - 20
+        return (
+          <motion.span
+            key={i}
+            className="confetti-piece"
+            style={{ background: CONFETTI_COLORS[i % CONFETTI_COLORS.length] }}
+            initial={{ x: 0, y: 0, opacity: 1, scale: 1, rotate: 0 }}
+            animate={{ x, y, opacity: 0, scale: 0.3, rotate: 240 }}
+            transition={{ duration: 1 + (i % 5) * 0.1, ease: 'easeOut' }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 const container = {
   hidden: {},
   visible: {
@@ -154,13 +295,34 @@ const item = {
 
 export default function App() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft())
+  const [opened, setOpened] = useState(false)
+  const [openBurstId, setOpenBurstId] = useState(0)
+  const [btnBurstId, setBtnBurstId] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  function handleOpen() {
+    setOpened(true)
+    setOpenBurstId((id) => id + 1)
+  }
+
+  function handleAddToCalendar() {
+    downloadICS()
+    setBtnBurstId((id) => id + 1)
+  }
+
   return (
+    <>
+      <AnimatePresence>
+        {!opened && <EnvelopeIntro key="envelope" onOpen={handleOpen} />}
+      </AnimatePresence>
+
+      {openBurstId > 0 && <ConfettiBurst key={openBurstId} className="confetti-center" />}
+
+      {opened && (
     <motion.div className="invitation" variants={container} initial="hidden" animate="visible">
       <FloatingPetals />
       <CoupleIllustration />
@@ -280,37 +442,42 @@ export default function App() {
       </motion.div>
 
       {/* Action buttons */}
-      <motion.div className="btn-row" variants={item}>
-        <motion.button
-          className="btn btn-primary"
-          onClick={downloadICS}
-          whileHover={{ y: -2, boxShadow: '0 10px 20px -10px rgba(122,31,43,0.5)' }}
-          whileTap={{ scale: 0.96 }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-          Add to Calendar
-        </motion.button>
-        <motion.a
-          className="btn btn-outline"
-          href={MAPS_LINK}
-          target="_blank"
-          rel="noreferrer"
-          whileHover={{ y: -2, boxShadow: '0 10px 20px -10px rgba(122,31,43,0.35)' }}
-          whileTap={{ scale: 0.96 }}
-        >
-          <svg width="14" height="14" viewBox="0 0 12 14" fill="none">
-            <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 6 3.5a1.5 1.5 0 0 1 0 3z" fill="#7A1F2B"/>
-          </svg>
-          Get Directions
-        </motion.a>
+      <motion.div className="btn-row-wrap" variants={item}>
+        {btnBurstId > 0 && <ConfettiBurst key={btnBurstId} className="confetti-btn" />}
+        <div className="btn-row">
+          <motion.button
+            className="btn btn-primary"
+            onClick={handleAddToCalendar}
+            whileHover={{ y: -2, boxShadow: '0 10px 20px -10px rgba(122,31,43,0.5)' }}
+            whileTap={{ scale: 0.96 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Add to Calendar
+          </motion.button>
+          <motion.a
+            className="btn btn-outline"
+            href={MAPS_LINK}
+            target="_blank"
+            rel="noreferrer"
+            whileHover={{ y: -2, boxShadow: '0 10px 20px -10px rgba(122,31,43,0.35)' }}
+            whileTap={{ scale: 0.96 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none">
+              <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 6 3.5a1.5 1.5 0 0 1 0 3z" fill="#7A1F2B"/>
+            </svg>
+            Get Directions
+          </motion.a>
+        </div>
       </motion.div>
 
       <motion.p className="footer-note" variants={item}>With love, Hafees & Jifa ♥</motion.p>
     </motion.div>
+      )}
+    </>
   )
 }
