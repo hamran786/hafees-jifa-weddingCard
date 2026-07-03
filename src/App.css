@@ -201,6 +201,40 @@ body {
   position: relative;
 }
 
+.music-toggle {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 40;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-gold);
+  background: rgba(255, 253, 249, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 24px -12px rgba(90, 22, 32, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.music-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.music-mute-slash {
+  position: absolute;
+  width: 34px;
+  height: 2px;
+  background: var(--color-primary);
+  transform: rotate(-45deg);
+  border-radius: 2px;
+}
+
 /* Floating petals background (animated via framer-motion) */
 .petals {
   position: absolute;

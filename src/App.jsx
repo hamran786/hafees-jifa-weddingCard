@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion'
 import './App.css'
+
+const MUSIC_SRC = '/wedding-audio.mp3'
 
 const WEDDING_DATE = new Date('2026-07-27T16:30:00')
 
@@ -132,6 +134,31 @@ function CoupleIllustration() {
       >
         ♥
       </motion.text>
+    </motion.svg>
+  )
+}
+
+function MusicIcon({ playing }) {
+  return (
+    <motion.svg
+      viewBox="0 0 40 40"
+      className="music-icon"
+      aria-hidden="true"
+      animate={{ rotate: playing ? 360 : 0 }}
+      transition={playing ? { duration: 3.5, repeat: Infinity, ease: 'linear' } : { duration: 0.4 }}
+    >
+      <defs>
+        <radialGradient id="vinylGradient" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor="#3a3a3a" />
+          <stop offset="100%" stopColor="#111111" />
+        </radialGradient>
+      </defs>
+      <circle cx="20" cy="20" r="18" fill="url(#vinylGradient)" stroke="#C9A15A" strokeWidth="1.2" />
+      <circle cx="20" cy="20" r="13.5" fill="none" stroke="#3d3d3d" strokeWidth="0.6" />
+      <circle cx="20" cy="20" r="9.5" fill="none" stroke="#3d3d3d" strokeWidth="0.6" />
+      <circle cx="20" cy="20" r="6.5" fill="#7A1F2B" stroke="#E8D5A8" strokeWidth="1" />
+      <circle cx="20" cy="20" r="1.6" fill="#E8D5A8" />
+      <circle cx="14" cy="13" r="2.6" fill="#ffffff" opacity="0.18" />
     </motion.svg>
   )
 }
@@ -298,15 +325,41 @@ export default function App() {
   const [opened, setOpened] = useState(false)
   const [openBurstId, setOpenBurstId] = useState(0)
   const [btnBurstId, setBtnBurstId] = useState(0)
+  const [musicOn, setMusicOn] = useState(true)
+  const audioRef = useRef(null)
 
   useEffect(() => {
     const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (!audioRef.current || !opened || !musicOn) return
+      if (document.hidden) {
+        audioRef.current.pause()
+      } else {
+        audioRef.current.play().catch(() => {})
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [opened, musicOn])
+
   function handleOpen() {
     setOpened(true)
     setOpenBurstId((id) => id + 1)
+    audioRef.current?.play().catch(() => {})
+  }
+
+  function toggleMusic() {
+    if (!audioRef.current) return
+    if (musicOn) {
+      audioRef.current.pause()
+    } else {
+      audioRef.current.play().catch(() => {})
+    }
+    setMusicOn((on) => !on)
   }
 
   function handleAddToCalendar() {
@@ -320,11 +373,27 @@ export default function App() {
 
   return (
     <>
+      <audio ref={audioRef} src={MUSIC_SRC} loop />
+
       <AnimatePresence>
         {!opened && <EnvelopeIntro key="envelope" onOpen={handleOpen} />}
       </AnimatePresence>
 
       {openBurstId > 0 && <ConfettiBurst key={openBurstId} className="confetti-center" />}
+
+      {opened && (
+        <motion.button
+          className="music-toggle"
+          onClick={toggleMusic}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileTap={{ scale: 0.9 }}
+          aria-label={musicOn ? 'Pause music' : 'Play music'}
+        >
+          <MusicIcon playing={musicOn} />
+          {!musicOn && <span className="music-mute-slash" />}
+        </motion.button>
+      )}
 
       {opened && (
     <motion.div className="invitation" variants={container} initial="hidden" animate="visible">
