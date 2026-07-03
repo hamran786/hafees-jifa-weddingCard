@@ -378,7 +378,7 @@ export default function App() {
       <motion.p className="invite-text" variants={item}>
         We joyfully invite you to join us<br />
         as we celebrate the blessed union<br />
-        of our wedding ceremony
+        of our <span className="invite-highlight">wedding reception</span>
       </motion.p>
 
       {/* Event details card */}
