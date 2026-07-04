@@ -8,7 +8,7 @@ const WEDDING_DATE = new Date('2026-07-27T16:30:00')
 
 const GROOM = 'Hafees Rahman'
 const BRIDE = 'Jifa Farhana'
-const EVENT_DAY = 'Sunday'
+const EVENT_DAY = 'Monday'
 const EVENT_DATE = '27 July 2026'
 const EVENT_TIME = '4:30 PM'
 const VENUE_NAME = 'Rhythm Event Galleria'
