@@ -594,6 +594,26 @@ export default function App() {
       >
         With love, Hafees & Jifa ♥
       </motion.p>
+
+      <motion.a
+        className="credit-badge"
+        href="https://www.instagram.com/hamran_hashimshareena/"
+        target="_blank"
+        rel="noreferrer"
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: .5, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 1.5, ease: 'easeOut' }}
+        whileHover={{ y: -2 }}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none" />
+        </svg>
+        <span className="credit-label">Created by</span>
+        <span className="credit-name">Hamran</span>
+      </motion.a>
     </motion.div>
       )}
     </>
